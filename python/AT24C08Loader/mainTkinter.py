@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import serial
 import serial.tools.list_ports as list_ports
+import re
 
 
 class SerialWriterGUI:
@@ -17,6 +18,8 @@ class SerialWriterGUI:
         self.root.geometry("600x500")
 
         self.ser = None   # now an instance variable
+
+        self.rw = tk.BooleanVar()
 
         # --- Build UI ---
         self.build_ui()
@@ -56,9 +59,12 @@ class SerialWriterGUI:
         self.page_entry = ttk.Entry(frame, width=10)
         self.page_entry.grid(row=2, column=3, sticky="w")
 
+        read_chkbx = tk.Checkbutton(frame, text="Read/Write (Write if checked)", variable=self.rw, onvalue=True)
+        read_chkbx.grid(row=3, column=0, columnspan=2, pady=10)
+
         # === SEND BUTTON ===
         send_btn = ttk.Button(frame, text="Send Data", command=self.send_data)
-        send_btn.grid(row=3, column=0, columnspan=4, pady=10)
+        send_btn.grid(row=3, column=2, columnspan=2, pady=10)
 
         # === OUTPUT LOG ===
         ttk.Label(frame, text="Output Log:").grid(row=4, column=0, columnspan=4, sticky="w")
@@ -135,19 +141,37 @@ class SerialWriterGUI:
                 self.log("Address exceeded 255, stopping.")
                 break
 
-            line = f"{page} {curr_addr} {val}\n\r"
+            if self.rw.get():
+                line = f"w{page} {curr_addr} {val}\n\r"
+            else:
+                line = f"r{page} {curr_addr}\n\r"
             written = self.ser.write(line.encode('utf-8'))
 
             if written > 0:
                 response = self.ser.readline().decode(errors="ignore")
-                while "Byte written successfully" not in response:
-                    response = self.ser.readline().decode(errors="ignore")
 
-                self.log(f"Wrote: {line.strip()}")
+                if self.rw.get():
+                    # --- Handle value write
+                    while "Byte written successfully" not in response:
+                        response = self.ser.readline().decode(errors="ignore")
+                    self.log(f"Wrote: {line.strip()}")
+
+                else:
+                    # --- Handle value read
+                    while "Read value" not in response:
+                        response = self.ser.readline().decode(errors="ignore")
+
+                    pattern = r"value\s+(\d{1,3})"
+                    match = re.search(pattern, response)
+                    # --- Response should look like "Read value <value> on page <page>, address <address>"
+                    # --- So we are parsing to get the <value>
+                    if match:
+                        self.log(f"Value: {match.group(1)}")
 
             curr_addr += 1
 
         self.log("=== Done ===")
+
 
 
 # ---------------- Run Application ---------------- #
