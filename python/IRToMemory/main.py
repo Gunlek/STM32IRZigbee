@@ -52,20 +52,25 @@ if __name__ == '__main__':
     path = './assets/Climatisation_avignon.ir' # input('Enter the path of IR commands file: ')
     parser = IRParser(path)
 
-    print("Available commands:", parser.get_available_commands())
-    command = input('Enter the command: ')
+    # print("Available commands:", parser.get_available_commands())
+    # command = input('Enter the command: ')
 
-    cmd = parser.get_command(command)
-    arr, ccr, rcr = cmd.get_registers(arr=420)
+    available_commands = parser.get_available_commands()
+    assert('On' in available_commands and 'Off' in available_commands and 'Master_auto' in available_commands and 'Master_heat' in available_commands)
 
-    print(cmd.get_duration())
-    generate_pwm_signal(arr, rcr, ccr)
+    commands = ['On', 'Off', 'Master_auto', 'Master_heat']
+    mmy = AT24C08()
 
-    # x_signal, y_signal = cmd.get_signal()
-    #
-    # # print("CCR:", ccr)
-    print("RCR:", rcr)
-    print("RCR length: ", len(rcr))
-    #
-    # mmy = AT24C08()
-    # print(mmy)
+    for cmd_name, index in zip(commands, range(len(commands))):
+        cmd = parser.get_command(cmd_name)
+        arr, ccr, rcr = cmd.get_registers(arr=420)
+
+        mmy.store(index, 0, len(rcr))
+
+        assert(len(rcr) < mmy.bytes_per_page)
+
+        for (r, address) in zip(rcr, range(len(rcr))):
+            # --- Shift address +1 as the first byte is the total length
+            mmy.store(page=index, address=address+1, value=r)
+    print(mmy)
+    mmy.commit()

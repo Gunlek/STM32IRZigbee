@@ -73,7 +73,7 @@ class IRCommand:
     def get_registers(self, arr):
         """
             Get the CCR / RCR registers to build the IR command
-            :param arr: The value of the ARR to compute the RCR values
+            :param arr: The value of the ARR to compute the CCR values
             :return:
         """
         arr_list = []
