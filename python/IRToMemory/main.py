@@ -49,28 +49,37 @@ def generate_pwm_signal(ARR_list, RCR_list, CCR_list, timer_clock_hz=38000):
     plt.show()
 
 if __name__ == '__main__':
-    path = './assets/Climatisation_avignon.ir' # input('Enter the path of IR commands file: ')
+    path = './assets/Dyson.ir' # input('Enter the path of IR commands file: ')
     parser = IRParser(path)
 
-    # print("Available commands:", parser.get_available_commands())
-    # command = input('Enter the command: ')
+    print("Available commands:", parser.get_available_commands())
+    command = input('Enter the command: ')
 
-    available_commands = parser.get_available_commands()
-    assert('On' in available_commands and 'Off' in available_commands and 'Master_auto' in available_commands and 'Master_heat' in available_commands)
-
-    commands = ['On', 'Off', 'Master_auto', 'Master_heat']
+    # available_commands = parser.get_available_commands()
+    # assert('On' in available_commands and 'Off' in available_commands and 'Master_auto' in available_commands and 'Master_heat' in available_commands)
+    #
+    # commands = ['On', 'Off', 'Master_auto', 'Master_heat']
+    commands = [command]
     mmy = AT24C08()
 
     for cmd_name, index in zip(commands, range(len(commands))):
         cmd = parser.get_command(cmd_name)
-        arr, ccr, rcr = cmd.get_registers(arr=420)
+        arr, ccr, rcr = cmd.get_registers(arr=210)
 
         mmy.store(index, 0, len(rcr))
 
+        print(len(rcr))
+        print(rcr)
+        print(ccr)
+
         assert(len(rcr) < mmy.bytes_per_page)
+
+        x, y = cmd.get_signal()
+        plt.plot(x, y)
+        plt.show()
 
         for (r, address) in zip(rcr, range(len(rcr))):
             # --- Shift address +1 as the first byte is the total length
             mmy.store(page=index, address=address+1, value=r)
     print(mmy)
-    mmy.commit()
+    # mmy.commit()

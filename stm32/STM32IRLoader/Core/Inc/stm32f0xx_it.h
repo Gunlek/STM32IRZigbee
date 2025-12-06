@@ -51,8 +51,12 @@ void HardFault_Handler(void);
 void SVC_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
+void EXTI0_1_IRQHandler(void);
 void DMA1_Channel2_3_IRQHandler(void);
 /* USER CODE BEGIN EFP */
+
+  extern TIM_HandleTypeDef htim16;
+  extern I2C_HandleTypeDef hi2c1;
 
 /* USER CODE END EFP */
 

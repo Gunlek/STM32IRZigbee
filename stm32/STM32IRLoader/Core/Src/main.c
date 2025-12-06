@@ -114,29 +114,29 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
-  writeSerial("Reading EEPROM...\r\n");
-  writeSerial("Page 0, address 0\r\n");
-
-  uint8_t deviceAddress = 0xA0;
-  uint8_t page = 0x01;
-  uint8_t payload[255];
-  uint8_t payloadLength = readIRPayload(&hi2c1, deviceAddress, page, payload);
-
-  uint8_t payloadDMALength = payloadLength * 2;
-  uint8_t payloadDMA[payloadDMALength];
-  uint8_t alternate = 0; // 0 → 0, 1 → 250
-
-  for (uint8_t i = 0; i < payloadLength; i++)
-  {
-    payloadDMA[2 * i]     = payload[i];
-    payloadDMA[2 * i + 1] = alternate ? 250 : 0;
-
-    alternate ^= 1; // bascule 0 ↔ 1
-  }
-
-  HAL_TIM_Base_Start(&htim16);
-  HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
-  HAL_TIM_DMABurst_MultiWriteStart(&htim16, TIM_DMABASE_RCR, TIM_DMA_UPDATE, payloadDMA, TIM_DMABurstLength_2Transfers, payloadDMALength);
+  // writeSerial("Reading EEPROM...\r\n");
+  // writeSerial("Page 0, address 0\r\n");
+  //
+  // uint8_t deviceAddress = 0xA0;
+  // uint8_t page = 0x01;
+  // uint8_t payload[255];
+  // uint8_t payloadLength = readIRPayload(&hi2c1, deviceAddress, page, payload);
+  //
+  // uint8_t payloadDMALength = payloadLength * 2;
+  // uint8_t payloadDMA[payloadDMALength];
+  // uint8_t alternate = 0; // 0 → 0, 1 → 250
+  //
+  // for (uint8_t i = 0; i < payloadLength; i++)
+  // {
+  //   payloadDMA[2 * i]     = payload[i];
+  //   payloadDMA[2 * i + 1] = alternate ? 70 : 0;
+  //
+  //   alternate ^= 1; // bascule 0 ↔ 1
+  // }
+  //
+  // HAL_TIM_DMABurst_MultiWriteStart(&htim16, TIM_DMABASE_RCR, TIM_DMA_UPDATE, payloadDMA, TIM_DMABurstLength_2Transfers, payloadDMALength);
+  // HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
+  
   // --- From here, the payload is stored in "payload"
 
   /* USER CODE END 2 */
@@ -145,11 +145,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_Delay(500);
-    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-
-    HAL_Delay(500);
-    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -267,9 +262,9 @@ static void MX_TIM16_Init(void)
 
   /* USER CODE END TIM16_Init 1 */
   htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 7;
+  htim16.Init.Prescaler = 0;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 420;
+  htim16.Init.Period = 210;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim16.Init.RepetitionCounter = 0;
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -282,8 +277,8 @@ static void MX_TIM16_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.Pulse = 210;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
@@ -380,12 +375,22 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin : BTN_Pin */
+  GPIO_InitStruct.Pin = BTN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BTN_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

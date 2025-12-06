@@ -22,6 +22,7 @@
 #include "stm32f0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "IRPayload.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -141,6 +142,48 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles EXTI line 0 and 1 interrupts.
+  */
+void EXTI0_1_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI0_1_IRQn 0 */
+
+  /* USER CODE END EXTI0_1_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(BTN_Pin);
+  /* USER CODE BEGIN EXTI0_1_IRQn 1 */
+
+  if (HAL_GPIO_ReadPin(BTN_GPIO_Port, BTN_Pin) == GPIO_PIN_SET) {
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+
+    uint8_t deviceAddress = 0xA0;
+    uint8_t page = 0x00;
+    uint8_t payload[255];
+    uint8_t payloadLength = readIRPayload(&hi2c1, deviceAddress, page, payload);
+
+    uint8_t payloadDMALength = payloadLength * 2;
+    uint8_t payloadDMA[payloadDMALength];
+    uint8_t alternate = 1; // 0 → 0 , 1 → 250
+
+    for (uint8_t i = 0; i < payloadLength-1; i++)
+    {
+      payloadDMA[2 * i]     = payload[i];
+      payloadDMA[2 * i + 1] = alternate ? 69 : 0;
+
+      alternate ^= 1; // bascule 0 ↔ 1
+    }
+
+    HAL_TIM_DMABurst_MultiWriteStart(&htim16, TIM_DMABASE_RCR, TIM_DMA_UPDATE, payloadDMA, TIM_DMABurstLength_2Transfers, payloadDMALength);
+
+    HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
+  }
+  else {
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+  }
+
+  /* USER CODE END EXTI0_1_IRQn 1 */
+}
+
+/**
   * @brief This function handles DMA1 channel 2 and 3 interrupts.
   */
 void DMA1_Channel2_3_IRQHandler(void)
@@ -155,5 +198,10 @@ void DMA1_Channel2_3_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+  HAL_TIM_DMABurst_WriteStop(htim, TIM_DMA_UPDATE);
+  HAL_TIM_PWM_Stop(htim, TIM_CHANNEL_1);
+}
 
 /* USER CODE END 1 */
