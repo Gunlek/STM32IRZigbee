@@ -2,8 +2,7 @@
     Generated with ChatGPT based on original implementation on main.py
     Fabien AUBRET - 2025
 """
-
-
+import time
 import tkinter as tk
 from tkinter import ttk, messagebox
 import serial
@@ -96,6 +95,10 @@ class SerialWriterGUI:
         try:
             self.ser = serial.Serial(port, 115200, timeout=1)
             self.log("Connected to " + port)
+
+            # --- Let some time for the Serial port to connect and reset the buffer
+            time.sleep(2)
+            self.ser.reset_input_buffer()
         except Exception as e:
             messagebox.showerror("Error", f"Cannot connect: {e}")
 
@@ -152,20 +155,21 @@ class SerialWriterGUI:
 
                 if self.rw.get():
                     # --- Handle value write
-                    while "Byte written successfully" not in response:
+                    while "OK" not in response:
                         response = self.ser.readline().decode(errors="ignore")
                     self.log(f"Wrote: {line.strip()}")
 
                 else:
                     # --- Handle value read
-                    while "Read value" not in response:
+                    while "VAL" not in response:
                         response = self.ser.readline().decode(errors="ignore")
 
-                    pattern = r"value\s+(\d{1,3})"
+                    pattern = r"VAL\s+(\d{1,3})"
                     match = re.search(pattern, response)
                     # --- Response should look like "Read value <value> on page <page>, address <address>"
                     # --- So we are parsing to get the <value>
                     if match:
+                        print(response)
                         self.log(f"Value: {match.group(1)}")
 
             curr_addr += 1

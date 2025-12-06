@@ -23,12 +23,15 @@ int deviceAddress   = 0xA0;
 
 int status;
 
-char * inBuffer;
-int bufferSize;
-
 int read_write_mode = 0; // 0 = Read, 1 = Write
-
 int parameters[3];
+bool parametersAcquisition;
+
+bool newRequest = false;
+
+String serialInput;
+
+bool DEBUG = false;
 
 void setup() {
   Wire.begin();
@@ -39,60 +42,69 @@ void setup() {
 void loop() {
   readSerial();
 
-  if(bufferSize > 0) {
-    // --- We have received data
-    // --- The data should be in the format Page Address Value
-    // --- 8 bits for each of the value
-    getParameters(inBuffer, parameters, read_write_mode);
-
-    // Serial.println((String)parameters[0] + ", " + parameters[1] + ", " + parameters[2]);
-
-    if(read_write_mode == 1) {
-      writeData(parameters[0], parameters[1], parameters[2]);
+  if(newRequest) {
+    if(!parametersAcquisition) {
+      Serial.println("ERR");
     }
     else {
-      uint8_t valueRead = readData(parameters[0], parameters[1]);
-      Serial.print("Read value ");
-      Serial.print(valueRead);
-      Serial.print(" on page ");
-      Serial.print(parameters[0]);
-      Serial.print(", address ");
-      Serial.println(parameters[1]);
+      if(read_write_mode == 1) {
+        writeData(parameters[0], parameters[1], parameters[2]);
+        if(!status) { Serial.println("OK"); }
+        else { Serial.println("ERR"); }
+      }
+      else {
+        int value = readData(parameters[0], parameters[1]);
+        if(!status) { 
+          Serial.print("VAL ");
+          Serial.println(value); 
+        }
+        else { Serial.println("ERR"); }
+      }
     }
+    newRequest = false;
   }
+
+  // if(bufferSize > 0) {
+  //   // --- We have received data
+  //   // --- The data should be in the format Page Address Value
+  //   // --- 8 bits for each of the value
+  //   getParameters(inBuffer, parameters, read_write_mode);
+
+  //   // Serial.println((String)parameters[0] + ", " + parameters[1] + ", " + parameters[2]);
+
+  //   if(read_write_mode == 1) {
+  //     writeData(parameters[0], parameters[1], parameters[2]);
+  //   }
+  //   else {
+  //     uint8_t valueRead = readData(parameters[0], parameters[1]);
+  //     Serial.print("Read value ");
+  //     Serial.print(valueRead);
+  //     Serial.print(" on page ");
+  //     Serial.print(parameters[0]);
+  //     Serial.print(", address ");
+  //     Serial.println(parameters[1]);
+  //   }
+  // }
 }
 
 void readSerial() {
-  bufferSize = 0;
   if(Serial.available()) {
-    int ct = millis();
-    while((millis() - ct) < 100) {}
-    
-    bufferSize = Serial.available();
-    inBuffer = malloc(bufferSize);
+    newRequest = true;
+    serialInput = Serial.readStringUntil('\n');
+    serialInput.replace("\r", "");
+    serialInput.trim();
     int index = 0;
 
-    while(Serial.available() > 0) {
-      if(index == 0) {
-        switch((char)Serial.read()) {
-          case 'r':
-            read_write_mode = 0;
-            break;
-
-          case 'w':
-            read_write_mode = 1;
-            break;
-          
-          default:
-            while(Serial.available() > 0) { Serial.read(); }
-            Serial.println("[Error] Missing or incorrect w/r flag at the beginning of the command");
-            break;
-        }
-      }
-      else {
-        inBuffer[index - 1] = (char)Serial.read();
-      }
-      index++;
+    if(serialInput.startsWith("w")) {
+      read_write_mode = 1;
+      parametersAcquisition = getParameters(serialInput.substring(1), 3);
+    }
+    else if(serialInput.startsWith("r")) {
+      read_write_mode = 0;
+      parametersAcquisition = getParameters(serialInput.substring(1), 2);
+    }
+    else {
+      Serial.println("ERR");
     }
   }
 }
@@ -100,23 +112,26 @@ void readSerial() {
 /*
  * Extract parameters from a string in the following format: X Y Z (space separated)
  */
-void getParameters(char * buffer, int * parameters, int mode) {
-  String inStr = String(buffer);
+bool getParameters(String input, int paramCount) {
+  int index = 0;
 
-  // --- Reading first parameter
-  uint8_t delim1 = inStr.indexOf(" ");
-  parameters[0] = inStr.substring(0, delim1).toInt();
-  inStr = inStr.substring(delim1+1, inStr.length());
+  while(input.length() > 0 && index < paramCount) {
+    int spaceIndex = input.indexOf(" ");
 
-  // --- Reading second parameter
-  uint8_t delim2 = inStr.indexOf(" ");
-  parameters[1] = inStr.substring(0, delim2).toInt();
-  inStr = inStr.substring(delim2+1, inStr.length());
-
-  if(mode) {
-    // --- Reading last parameter
-    parameters[2] = inStr.toInt();
+    if(spaceIndex >= 0) {
+      parameters[index] = input.substring(0, spaceIndex).toInt();
+      input = input.substring(spaceIndex+1);
+      input.trim();
+      index++;
+    }
+    else {
+      parameters[index] = input.toInt();
+      index++;
+      break;
+    }
   }
+
+  return (index == paramCount);
 }
 
 /*
@@ -125,29 +140,28 @@ void getParameters(char * buffer, int * parameters, int mode) {
  * value: uint8_t, the value (byte) to be written
  */
 uint8_t writeData(uint8_t page, uint8_t addr, uint8_t value) {
-    Serial.println((String)"Writing " + value + " at address " + addr);
-    int writeAddress = ((deviceAddress & 0xF0) >> 1) | page << 1;
+  if(DEBUG) {
+    Serial.println((String)"Writing " + value + " at address " + addr + ", page " + page);
+  }
+  int writeAddress = ((deviceAddress & 0xF0) >> 1) + page;
 
-    Wire.beginTransmission(writeAddress);
-    // --- Send targeted word address
-    Wire.write(addr);
-    // --- Write desired value
-    Wire.write(value);
-    // --- End transmission (Send STOP signal)
-    status = Wire.endTransmission();
+  Wire.beginTransmission(writeAddress);
+  // --- Send targeted word address
+  Wire.write(addr);
+  // --- Write desired value
+  Wire.write(value);
+  // --- End transmission (Send STOP signal)
+  status = Wire.endTransmission();
 
-    if(status == 0) {
-      Serial.println("Byte written successfully");
-    }
-    else {
-      Serial.println((String)"Error while writing the value: " + status);
-    }
+  return status;
 }
 
 uint8_t readData(uint8_t page, uint8_t addr) {
-  Serial.println((String)"Reading on page " + page + ", address " + addr);
+  if(DEBUG) {
+    Serial.println((String)"Reading on page " + page + ", address " + addr);
+  }
 
-  int readAddress = ((deviceAddress & 0xF0) >> 1) | page << 1;
+  int readAddress = ((deviceAddress & 0xF0) >> 1) + page;
 
   // --- Position the reading cursor at the correct position
   Wire.beginTransmission(readAddress);
@@ -159,7 +173,6 @@ uint8_t readData(uint8_t page, uint8_t addr) {
 
   // --- Read the value after the cursor
   return value;
-  // return Wire.requestFrom((deviceAddress & 0xF0) >> 1, 1);
 }
 
 //  TODO: Add reading function
