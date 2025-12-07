@@ -1,0 +1,3 @@
+../Core/Src/IRInterface.c:12:6:IRInterface_Init	1
+../Core/Src/IRInterface.c:16:6:IRInterface_Load	2
+../Core/Src/IRInterface.c:28:6:IRInterface_Send	2

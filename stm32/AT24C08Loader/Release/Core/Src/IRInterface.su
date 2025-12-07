@@ -1,0 +1,3 @@
+../Core/Src/IRInterface.c:10:6:IRInterface_Init	8	static
+../Core/Src/IRInterface.c:14:6:IRInterface_Load	24	static
+../Core/Src/IRInterface.c:26:6:IRInterface_Send	56	dynamic

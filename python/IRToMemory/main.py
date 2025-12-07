@@ -54,32 +54,31 @@ if __name__ == '__main__':
 
     print("Available commands:", parser.get_available_commands())
     command = input('Enter the command: ')
+    commands = command.split(", ")
 
-    # available_commands = parser.get_available_commands()
-    # assert('On' in available_commands and 'Off' in available_commands and 'Master_auto' in available_commands and 'Master_heat' in available_commands)
-    #
-    # commands = ['On', 'Off', 'Master_auto', 'Master_heat']
-    commands = [command]
     mmy = AT24C08()
 
-    for cmd_name, index in zip(commands, range(len(commands))):
+    stored_commands = {}
+
+    offset = 0
+    for cmd_name in commands:
+
         cmd = parser.get_command(cmd_name)
         arr, ccr, rcr = cmd.get_registers(arr=210)
 
-        mmy.store(index, 0, len(rcr))
+        mmy.store(address=offset, value=len(rcr))
 
-        print(len(rcr))
-        print(rcr)
-        print(ccr)
-
-        assert(len(rcr) < mmy.bytes_per_page)
-
-        x, y = cmd.get_signal()
-        plt.plot(x, y)
-        plt.show()
+        assert(offset + len(rcr) < mmy.bytes_per_page * mmy.pages)
 
         for (r, address) in zip(rcr, range(len(rcr))):
             # --- Shift address +1 as the first byte is the total length
-            mmy.store(page=index, address=address+1, value=r)
+            mmy.store(address=offset + address+1, value=r)
+
+        stored_commands[cmd_name] = offset
+        offset += len(rcr) + 1
+
     print(mmy)
-    # mmy.commit()
+    print(stored_commands)
+
+    print(mmy.memory[0][67::])
+    mmy.commit()

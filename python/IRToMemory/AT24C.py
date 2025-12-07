@@ -17,7 +17,12 @@ class AT24C:
             str_mmy += str(page) + '\n'
         return str_mmy
 
-    def store(self, page, address, value):
+    def store(self, page=-1, address=0, value=0):
+        if page == -1:
+            # --- Page is not filled, we must compute page from the given address
+            page = address // self.bytes_per_page
+            address = address % self.bytes_per_page
+
         self.memory[page][address] = value
 
     def commit(self):
