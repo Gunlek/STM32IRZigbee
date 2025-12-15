@@ -1,0 +1,4 @@
+../Core/Src/IRInterface/AT24C08.c:19:6:AT24C08_Init	1
+../Core/Src/IRInterface/AT24C08.c:30:9:AT24C08_Read	1
+../Core/Src/IRInterface/AT24C08.c:39:9:AT24C08_ReadAddress	1
+../Core/Src/IRInterface/AT24C08.c:53:19:AT24C08_Write	1

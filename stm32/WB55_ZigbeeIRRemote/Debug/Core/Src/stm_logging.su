@@ -1,0 +1,4 @@
+../Core/Src/stm_logging.c:69:24:logRegion	56	static
+../Core/Src/stm_logging.c:100:27:levelToString	16	static
+../Core/Src/stm_logging.c:130:24:logLevel	24	static
+../Core/Src/stm_logging.c:163:6:logApplication	280	static

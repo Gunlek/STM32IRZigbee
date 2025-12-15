@@ -358,10 +358,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  8000352:	b29b      	uxth	r3, r3
  8000354:	2b00      	cmp	r3, #0
  8000356:	d105      	bne.n	8000364 <HAL_TIM_PeriodElapsedCallback+0x48>
-				htim->Instance->CCR1 = 267;
+				htim->Instance->CCR1 = 277;
  8000358:	687b      	ldr	r3, [r7, #4]
  800035a:	681b      	ldr	r3, [r3, #0]
- 800035c:	f240 120b 	movw	r2, #267	@ 0x10b
+ 800035c:	f240 1215 	movw	r2, #277	@ 0x115
  8000360:	635a      	str	r2, [r3, #52]	@ 0x34
  8000362:	e003      	b.n	800036c <HAL_TIM_PeriodElapsedCallback+0x50>
 			}
