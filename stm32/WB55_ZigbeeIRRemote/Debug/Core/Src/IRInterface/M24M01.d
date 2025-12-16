@@ -1,5 +1,5 @@
-Core/Src/IRInterface/AT24C08.o: ../Core/Src/IRInterface/AT24C08.c \
- ../Core/Inc/IRInterface/AT24C08.h \
+Core/Src/IRInterface/M24M01.o: ../Core/Src/IRInterface/M24M01.c \
+ ../Core/Inc/IRInterface/M24M01.h \
  ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal.h \
  ../Core/Inc/stm32wbxx_hal_conf.h \
  ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_dma.h \
@@ -42,7 +42,7 @@ Core/Src/IRInterface/AT24C08.o: ../Core/Src/IRInterface/AT24C08.c \
  ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_uart.h \
  ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_uart_ex.h \
  ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_ll_system.h
-../Core/Inc/IRInterface/AT24C08.h:
+../Core/Inc/IRInterface/M24M01.h:
 ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal.h:
 ../Core/Inc/stm32wbxx_hal_conf.h:
 ../Drivers/STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_dma.h:

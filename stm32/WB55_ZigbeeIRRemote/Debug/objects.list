@@ -1,5 +1,5 @@
-"./Core/Src/IRInterface/AT24C08.o"
 "./Core/Src/IRInterface/IRInterface.o"
+"./Core/Src/IRInterface/M24M01.o"
 "./Core/Src/app_entry.o"
 "./Core/Src/hw_timerserver.o"
 "./Core/Src/hw_uart.o"

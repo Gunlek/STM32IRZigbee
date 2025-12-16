@@ -130,7 +130,7 @@ static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 =
 static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   /* USER CODE BEGIN 0 OnOff server 1 off 1 */
-	IRInterface_Send(&htim1, CMD_POWER);
+	IRInterface_Send(&htim17, CMD_POWER);
 	APP_DBG("OFF");
   return ZCL_STATUS_SUCCESS;
   /* USER CODE END 0 OnOff server 1 off 1 */
@@ -140,7 +140,7 @@ static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, str
 static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   /* USER CODE BEGIN 1 OnOff server 1 on 1 */
-	IRInterface_Send(&htim1, CMD_POWER);
+	IRInterface_Send(&htim17, CMD_POWER);
 	APP_DBG("ON");
   return ZCL_STATUS_SUCCESS;
   /* USER CODE END 1 OnOff server 1 on 1 */
@@ -150,7 +150,7 @@ static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, stru
 static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   /* USER CODE BEGIN 2 OnOff server 1 toggle 1 */
-	IRInterface_Send(&htim1, CMD_POWER);
+	IRInterface_Send(&htim17, CMD_POWER);
   return ZCL_STATUS_SUCCESS;
   /* USER CODE END 2 OnOff server 1 toggle 1 */
 }

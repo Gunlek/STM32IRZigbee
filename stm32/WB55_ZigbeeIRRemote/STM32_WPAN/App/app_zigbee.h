@@ -56,7 +56,7 @@ typedef enum
 } ErrAppliIdEnum_t;
 /* USER CODE BEGIN ET */
 
-extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim17;
 
 /* USER CODE END ET */
 

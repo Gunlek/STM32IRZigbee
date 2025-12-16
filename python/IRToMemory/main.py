@@ -3,7 +3,7 @@
 from matplotlib import pyplot as plt
 
 from IRParser import IRParser
-from AT24C08 import *
+from M24M01 import *
 
 def generate_pwm_signal(ARR_list, RCR_list, CCR_list, timer_clock_hz=38000):
     """
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     command = input('Enter the command: ')
     commands = command.split(", ")
 
-    mmy = AT24C08()
+    mmy = M24M01()
 
     stored_commands = {}
 
@@ -64,11 +64,9 @@ if __name__ == '__main__':
     for cmd_name in commands:
 
         cmd = parser.get_command(cmd_name)
-        arr, ccr, rcr = cmd.get_registers(arr=210)
+        arr, ccr, rcr = cmd.get_registers(arr=841)
 
         mmy.store(address=offset, value=len(rcr))
-
-        assert(offset + len(rcr) < mmy.bytes_per_page * mmy.pages)
 
         for (r, address) in zip(rcr, range(len(rcr))):
             # --- Shift address +1 as the first byte is the total length
@@ -80,5 +78,4 @@ if __name__ == '__main__':
     print(mmy)
     print(stored_commands)
 
-    print(mmy.memory[0][67::])
     mmy.commit()

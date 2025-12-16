@@ -5,8 +5,8 @@
 #ifndef STM32AT24C08_IRLOADER_H
 #define STM32AT24C08_IRLOADER_H
 
+#include <IRInterface/M24M01.h>
 #include <stdlib.h>
-#include "AT24C08.h"
 
 enum IRInterface_Commands {
     CMD_POWER = 0,

@@ -91,7 +91,7 @@ STM32_WPAN/App/app_zigbee.o: ../STM32_WPAN/App/app_zigbee.c \
  ../Utilities/sequencer/stm32_seq.h \
  ../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/zcl.h \
  ../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/general/zcl.onoff.h \
- ../Core/Inc/IRInterface/IRInterface.h ../Core/Inc/IRInterface/AT24C08.h
+ ../Core/Inc/IRInterface/IRInterface.h ../Core/Inc/IRInterface/M24M01.h
 ../Core/Inc/app_common.h:
 ../Core/Inc/app_conf.h:
 ../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/hw.h:
@@ -190,4 +190,4 @@ STM32_WPAN/App/app_zigbee.o: ../STM32_WPAN/App/app_zigbee.c \
 ../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/zcl.h:
 ../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/general/zcl.onoff.h:
 ../Core/Inc/IRInterface/IRInterface.h:
-../Core/Inc/IRInterface/AT24C08.h:
+../Core/Inc/IRInterface/M24M01.h:

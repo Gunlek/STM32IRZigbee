@@ -1,4 +1,0 @@
-../Core/Src/IRInterface/AT24C08.c:19:6:AT24C08_Init	16	static
-../Core/Src/IRInterface/AT24C08.c:30:9:AT24C08_Read	32	static
-../Core/Src/IRInterface/AT24C08.c:39:9:AT24C08_ReadAddress	24	static
-../Core/Src/IRInterface/AT24C08.c:53:19:AT24C08_Write	32	static

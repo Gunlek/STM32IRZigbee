@@ -5,16 +5,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/IRInterface/AT24C08.c \
-../Core/Src/IRInterface/IRInterface.c 
+../Core/Src/IRInterface/IRInterface.c \
+../Core/Src/IRInterface/M24M01.c 
 
 OBJS += \
-./Core/Src/IRInterface/AT24C08.o \
-./Core/Src/IRInterface/IRInterface.o 
+./Core/Src/IRInterface/IRInterface.o \
+./Core/Src/IRInterface/M24M01.o 
 
 C_DEPS += \
-./Core/Src/IRInterface/AT24C08.d \
-./Core/Src/IRInterface/IRInterface.d 
+./Core/Src/IRInterface/IRInterface.d \
+./Core/Src/IRInterface/M24M01.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -24,7 +24,7 @@ Core/Src/IRInterface/%.o Core/Src/IRInterface/%.su Core/Src/IRInterface/%.cyclo:
 clean: clean-Core-2f-Src-2f-IRInterface
 
 clean-Core-2f-Src-2f-IRInterface:
-	-$(RM) ./Core/Src/IRInterface/AT24C08.cyclo ./Core/Src/IRInterface/AT24C08.d ./Core/Src/IRInterface/AT24C08.o ./Core/Src/IRInterface/AT24C08.su ./Core/Src/IRInterface/IRInterface.cyclo ./Core/Src/IRInterface/IRInterface.d ./Core/Src/IRInterface/IRInterface.o ./Core/Src/IRInterface/IRInterface.su
+	-$(RM) ./Core/Src/IRInterface/IRInterface.cyclo ./Core/Src/IRInterface/IRInterface.d ./Core/Src/IRInterface/IRInterface.o ./Core/Src/IRInterface/IRInterface.su ./Core/Src/IRInterface/M24M01.cyclo ./Core/Src/IRInterface/M24M01.d ./Core/Src/IRInterface/M24M01.o ./Core/Src/IRInterface/M24M01.su
 
 .PHONY: clean-Core-2f-Src-2f-IRInterface
 
