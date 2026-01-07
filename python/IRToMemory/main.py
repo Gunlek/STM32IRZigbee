@@ -49,7 +49,7 @@ def generate_pwm_signal(ARR_list, RCR_list, CCR_list, timer_clock_hz=38000):
     plt.show()
 
 if __name__ == '__main__':
-    path = './assets/Dyson.ir' # input('Enter the path of IR commands file: ')
+    path = './assets/Climatisation_avignon.ir' # input('Enter the path of IR commands file: ')
     parser = IRParser(path)
 
     print("Available commands:", parser.get_available_commands())
@@ -66,11 +66,12 @@ if __name__ == '__main__':
         cmd = parser.get_command(cmd_name)
         arr, ccr, rcr = cmd.get_registers(arr=841)
 
-        mmy.store(address=offset, value=len(rcr))
+        mmy.store(address=offset, value=len(rcr) >> 8 & 0xFF)
+        mmy.store(address=offset+1, value=len(rcr) & 0xFF)
 
         for (r, address) in zip(rcr, range(len(rcr))):
-            # --- Shift address +1 as the first byte is the total length
-            mmy.store(address=offset + address+1, value=r)
+            # --- Shift address + 2 as the two first bytes are the total length
+            mmy.store(address=offset + address+2, value=r)
 
         stored_commands[cmd_name] = offset
         offset += len(rcr) + 1

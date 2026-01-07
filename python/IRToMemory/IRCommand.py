@@ -2,6 +2,8 @@ import math
 
 import numpy as np
 
+import matplotlib.pyplot as plt
+
 
 class IRCommand:
     def __init__(self, name, type, frequency, duty_cycle, data):
@@ -68,6 +70,9 @@ class IRCommand:
 
             y_signal += [1 if state else 0]
 
+        plt.plot(x_signal, y_signal)
+        plt.show()
+
         return x_signal, y_signal
 
     def get_registers(self, arr):
@@ -80,23 +85,34 @@ class IRCommand:
         ccr_list = []  # Duty cycle of the on-going signal
         rcr_list = []  # Number of pulse per on-going signal
 
-        x_signal, y_signal = self.get_signal()
+        period = 1 / 38_000 * 1000000
+        duration_list = [int(raw_data) for raw_data in self.data.split(' ')]
 
-        rcr = 0
-        last_value = y_signal[0]
-        for k in range(len(x_signal)):
-            if y_signal[k] != last_value:
-                arr_list += [arr]
-                rcr_list += [rcr]
+        state = True
+        for duration in duration_list:
+            arr_list.append(arr)
+            ccr_list.append(int(arr * self.duty_cycle) if state else 0)
+            rcr_list.append(int(duration / period) + 1)
 
-                if last_value >= 0.5:
-                    ccr_list += [int(arr * self.duty_cycle)]
-                else:
-                    ccr_list += [0]
+            state = not state
+        # print(ccr_list)
+        # print(rcr_list)
 
-                rcr = 0
-
-            last_value = y_signal[k]
-            rcr += 1
+        # rcr = 0
+        # last_value = y_signal[0]
+        # for k in range(len(x_signal)):
+        #     if y_signal[k] != last_value:
+        #         arr_list += [arr]
+        #         rcr_list += [rcr]
+        #
+        #         if last_value >= 0.5:
+        #             ccr_list += [int(arr * self.duty_cycle)]
+        #         else:
+        #             ccr_list += [0]
+        #
+        #         rcr = 0
+        #
+        #     last_value = y_signal[k]
+        #     rcr += 1
 
         return arr_list, ccr_list, rcr_list
