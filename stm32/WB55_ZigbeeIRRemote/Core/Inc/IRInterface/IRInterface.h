@@ -9,10 +9,8 @@
 #include <stdlib.h>
 
 enum IRInterface_Commands {
-    CMD_POWER = 0,
-    CMD_SWING = 67,
-    CMD_SPEED_P = 134,
-    CMD_SPEED_M = 201
+    CMD_OFF = 0,
+    CMD_ON_HEAT_20DEG = 116
 };
 
 void IRInterface_Init(I2C_HandleTypeDef * i2c);

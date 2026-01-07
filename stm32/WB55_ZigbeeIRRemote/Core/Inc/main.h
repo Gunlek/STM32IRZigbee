@@ -63,6 +63,8 @@ void MX_USART1_UART_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LED_CS_Pin GPIO_PIN_1
+#define LED_CS_GPIO_Port GPIOH
 
 /* USER CODE BEGIN Private defines */
 
