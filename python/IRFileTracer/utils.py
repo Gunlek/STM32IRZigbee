@@ -33,10 +33,4 @@ def load_ir_file(file_path):
         key_list += key + ', '
     print(key_list.rstrip(', '))
 
-    requested_cmd = input('Command name to be traced: ')
-
-    if requested_cmd not in section_dict.keys():
-        print('Error: This command is not in the provided file')
-        exit()
-
-    return section_dict, requested_cmd
+    return section_dict
