@@ -131,6 +131,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  if(freeMemoryFlag) {
+		  free(IRInterface_commandBuffer);
+	  }
     /* USER CODE END WHILE */
     MX_APPE_Process();
 

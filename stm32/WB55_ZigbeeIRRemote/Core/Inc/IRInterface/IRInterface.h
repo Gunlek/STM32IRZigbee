@@ -10,8 +10,11 @@
 
 enum IRInterface_Commands {
     CMD_OFF = 0,
-    CMD_ON_HEAT_20DEG = 116
+    CMD_ON_HEAT_20DEG = 117
 };
+
+extern uint8_t * IRInterface_commandBuffer;
+extern volatile uint8_t freeMemoryFlag;
 
 void IRInterface_Init(I2C_HandleTypeDef * i2c);
 void IRInterface_Load(enum IRInterface_Commands command);

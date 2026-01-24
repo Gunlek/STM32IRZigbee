@@ -70,8 +70,8 @@ all: main-build
 main-build: WB55_ZigbeeIRRemote.elf secondary-outputs
 
 # Tool invocations
-WB55_ZigbeeIRRemote.elf WB55_ZigbeeIRRemote.map: $(OBJS) $(USER_OBJS) E:\Desktop\Code\STM32IRZigbee\stm32\WB55_ZigbeeIRRemote\STM32WB5MMGHX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "WB55_ZigbeeIRRemote.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"E:\Desktop\Code\STM32IRZigbee\stm32\WB55_ZigbeeIRRemote\STM32WB5MMGHX_FLASH.ld" --specs=nosys.specs -Wl,-Map="WB55_ZigbeeIRRemote.map" -Wl,--gc-sections -static -L../Middlewares/ST/STM32_WPAN/zigbee/lib --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+WB55_ZigbeeIRRemote.elf WB55_ZigbeeIRRemote.map: $(OBJS) $(USER_OBJS) /Users/fabienaubret/Desktop/Code/STM32IRZigbee/stm32/WB55_ZigbeeIRRemote/STM32WB5MMGHX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "WB55_ZigbeeIRRemote.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/fabienaubret/Desktop/Code/STM32IRZigbee/stm32/WB55_ZigbeeIRRemote/STM32WB5MMGHX_FLASH.ld" --specs=nosys.specs -Wl,-Map="WB55_ZigbeeIRRemote.map" -Wl,--gc-sections -static -L../Middlewares/ST/STM32_WPAN/zigbee/lib --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
