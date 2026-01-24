@@ -49,7 +49,7 @@ def generate_pwm_signal(ARR_list, RCR_list, CCR_list, timer_clock_hz=38000):
     plt.show()
 
 if __name__ == '__main__':
-    path = './assets/Climatisation_avignon.ir' # input('Enter the path of IR commands file: ')
+    path = './assets/Clim_Avignon.ir' # input('Enter the path of IR commands file: ')
     parser = IRParser(path)
 
     print("Available commands:", parser.get_available_commands())
@@ -74,9 +74,9 @@ if __name__ == '__main__':
             mmy.store(address=offset + address+2, value=r)
 
         stored_commands[cmd_name] = offset
-        offset += len(rcr) + 1
+        offset += len(rcr) + 2
 
-    print(mmy)
+    # print(mmy)
     print(stored_commands)
 
     mmy.commit()
