@@ -51,20 +51,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			tim->RCR = IRInterface_commandBuffer[bufferIndex];
 			bufferIndex++;
 		}
+		else if(bufferIndex < fullPayloadLength+1){
+			// --- Ajout d'une condition de stop
+			// --- Un 0 final
+			htim->Instance->CCR1 = 0;
+			htim->Instance->RCR = 45;
+			bufferIndex++;
+		}
 		else {
-			if(bufferIndex < fullPayloadLength+1){
-				// --- Ajout d'une condition de stop
-				// --- Un 0 final
-				htim->Instance->CCR1 = 0;
-				htim->Instance->RCR = 45;
-				bufferIndex++;
-			}
-			else {
-				HAL_TIM_Base_Stop_IT(htim);
-				HAL_TIM_PWM_Stop_IT(htim, TIM_CHANNEL_1);
-				bufferIndex = 0;
-				freeMemoryFlag = 1;
-			}
+			HAL_TIM_Base_Stop_IT(htim);
+			HAL_TIM_PWM_Stop_IT(htim, TIM_CHANNEL_1);
+			bufferIndex = 0;
+			freeMemoryFlag = 1;
 		}
 	}
 }

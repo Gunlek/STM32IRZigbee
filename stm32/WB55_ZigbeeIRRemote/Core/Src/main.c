@@ -133,6 +133,7 @@ int main(void)
   {
 	  if(freeMemoryFlag) {
 		  free(IRInterface_commandBuffer);
+		  freeMemoryFlag = 0;
 	  }
     /* USER CODE END WHILE */
     MX_APPE_Process();
